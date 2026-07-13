@@ -1,0 +1,39 @@
+services:
+  pocket-id:
+    image: ghcr.io/pocket-id/pocket-id:latest
+    container_name: pocket-id
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "1411:1411"
+    volumes:
+      - "./pocket-id/data:/app/data"
+    healthcheck:
+      test: ["CMD", "/app/pocket-id", "healthcheck"]
+      interval: 1m30s
+      timeout: 5s
+      retries: 2
+      start_period: 10s
+    networks:
+      pocket-id-net:
+        ipv4_address: 172.28.1.10
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    depends_on:
+      - pocket-id
+    networks:
+      pocket-id-net:
+        ipv4_address: 172.28.1.11
+
+networks:
+  pocket-id-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.1.0/24
