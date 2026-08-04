@@ -8,6 +8,7 @@ Compose templates and runtime secrets live in the public `Kubernetes-Home-Lab` r
 
 ```
 pocket-id/data/                          # Pocket ID DB, OIDC clients, uploads
+pocket-id/pocket-id.env                  # Pocket ID ENCRYPTION_KEY + tunnel token backup
 kubernetes/sealed-secrets-key-backup.yaml # Sealed-secrets master key (manual)
 ```
 
